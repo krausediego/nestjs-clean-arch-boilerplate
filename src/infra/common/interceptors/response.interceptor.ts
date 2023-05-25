@@ -32,6 +32,7 @@ export class ResponseInterceptor<T>
     const now = Date.now();
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
+    const response = httpContext.getResponse();
 
     return next.handle().pipe(
       map((data) => ({
@@ -40,6 +41,7 @@ export class ResponseInterceptor<T>
         path: request.path,
         duration: `${Date.now() - now}ms`,
         method: request.method,
+        statusCode: response.statusCode,
       })),
     );
   }

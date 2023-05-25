@@ -1,5 +1,7 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { ISignIn } from '../interfaces/auth/sign-in.interface';
 
 export interface UserRepository {
   signUp(data: Prisma.UserCreateInput): Promise<void>;
+  signIn(data: Omit<ISignIn, 'password'>): Promise<User>;
 }

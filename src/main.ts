@@ -7,6 +7,7 @@ import {
   ResponseFormat,
   ResponseInterceptor,
 } from './infra/common/interceptors/response.interceptor';
+import { AllExceptionFilter } from './infra/common/filter/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,8 @@ async function bootstrap() {
 
   // interceptors
   app.useGlobalInterceptors(new ResponseInterceptor());
+
+  app.useGlobalFilters(new AllExceptionFilter());
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));

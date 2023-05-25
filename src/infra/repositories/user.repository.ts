@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
+import { ISignIn } from 'src/domain/interfaces/auth/sign-in.interface';
 import { UserRepository } from 'src/domain/repositories/user-repository.interface';
 
 @Injectable()
@@ -9,5 +10,15 @@ export class DatabaseUserRepository implements UserRepository {
 
   async signUp(data: Prisma.UserCreateInput): Promise<void> {
     await this.prismaService.user.create({ data });
+  }
+
+  async signIn(data: Omit<ISignIn, 'password'>): Promise<User> {
+    const { emailOrUsername } = data;
+
+    return this.prismaService.user.findFirst({
+      where: {
+        OR: [{ email: emailOrUsername }, { username: emailOrUsername }],
+      },
+    });
   }
 }
