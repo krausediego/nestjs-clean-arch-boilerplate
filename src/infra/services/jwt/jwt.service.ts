@@ -11,7 +11,7 @@ export class JwtTokenService implements IJwtService {
     return decode;
   }
 
-  createToken(payload: IJwtPayload): string {
-    return this.jwtService.sign(payload);
+  createToken(payload: IJwtPayload, secret: string): string {
+    return this.jwtService.sign(payload, { secret });
   }
 }

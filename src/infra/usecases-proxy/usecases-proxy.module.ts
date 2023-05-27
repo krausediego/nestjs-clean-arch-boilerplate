@@ -10,9 +10,17 @@ import { ExceptionsService } from '../exceptions/exceptions.service';
 import { JwtTokenService } from '../services/jwt/jwt.service';
 import { ExceptionsModule } from '../exceptions/exceptions.module';
 import { JwtTokenModule } from '../services/jwt/jwt.module';
+import { RedisCacheModule } from '../cache/redis/redis-cache.module';
+import { TokenCache } from '../cache/redis/token.cache';
 
 @Module({
-  imports: [RepositoriesModule, BcryptModule, ExceptionsModule, JwtTokenModule],
+  imports: [
+    RepositoriesModule,
+    BcryptModule,
+    ExceptionsModule,
+    JwtTokenModule,
+    RedisCacheModule,
+  ],
 })
 export class UseCasesProxyModule {
   // Auth
@@ -37,6 +45,7 @@ export class UseCasesProxyModule {
             BcryptService,
             ExceptionsService,
             JwtTokenService,
+            TokenCache,
           ],
           provide: UseCasesProxyModule.SIGN_IN_USECASES_PROXY,
           useFactory: (
@@ -44,9 +53,10 @@ export class UseCasesProxyModule {
             bcrypt: BcryptService,
             exceptions: ExceptionsService,
             jwt: JwtTokenService,
+            tokenCache: TokenCache,
           ) =>
             new UseCaseProxy(
-              new SignInUseCases(userRepo, bcrypt, exceptions, jwt),
+              new SignInUseCases(userRepo, bcrypt, exceptions, jwt, tokenCache),
             ),
         },
       ],

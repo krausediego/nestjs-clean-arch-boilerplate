@@ -1,5 +1,6 @@
 import { IBcryptService } from 'src/domain/adapters/bcrypt.interface';
 import { IJwtService } from 'src/domain/adapters/jwt.interface';
+import { ITokenCache } from 'src/domain/cache/token.interface';
 import { IException } from 'src/domain/exceptions/exceptions.interface';
 import { ISignIn } from 'src/domain/interfaces/auth/sign-in.interface';
 import { UserRepository } from 'src/domain/repositories/user-repository.interface';
@@ -10,6 +11,7 @@ export class SignInUseCases {
     private readonly bcryptService: IBcryptService,
     private readonly exception: IException,
     private readonly jwt: IJwtService,
+    private readonly tokenCache: ITokenCache,
   ) {}
 
   async validateLogin(data: ISignIn): Promise<Record<string, any>> {
@@ -33,6 +35,8 @@ export class SignInUseCases {
     await this.userRepository.updateLastLogin(id);
 
     const token = this.jwt.createToken({ id, username, email }, secret);
+
+    await this.tokenCache.setToken(id, token);
 
     return { token };
   }

@@ -1,5 +1,6 @@
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { Module } from '@nestjs/common';
+import { TokenCache } from './token.cache';
 
 @Module({
   imports: [
@@ -11,5 +12,7 @@ import { Module } from '@nestjs/common';
       },
     }),
   ],
+  providers: [TokenCache],
+  exports: [TokenCache],
 })
 export class RedisCacheModule {}
