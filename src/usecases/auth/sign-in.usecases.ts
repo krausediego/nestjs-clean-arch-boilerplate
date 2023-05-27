@@ -30,6 +30,8 @@ export class SignInUseCases {
 
     const { id, username, email } = user;
 
+    await this.userRepository.updateLastLogin(id);
+
     const token = this.jwt.createToken({ id, username, email }, secret);
 
     return { token };

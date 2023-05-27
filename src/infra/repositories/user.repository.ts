@@ -21,4 +21,11 @@ export class DatabaseUserRepository implements UserRepository {
       },
     });
   }
+
+  async updateLastLogin(user_id: string): Promise<void> {
+    await this.prismaService.user.update({
+      data: { last_login: new Date() },
+      where: { id: user_id },
+    });
+  }
 }
