@@ -11,7 +11,11 @@ export class JwtTokenService implements IJwtService {
     return decode;
   }
 
-  createToken(payload: IJwtPayload, secret: string): string {
-    return this.jwtService.sign(payload, { secret });
+  createToken(
+    payload: IJwtPayload,
+    secret: string,
+    expiresIn: string | number,
+  ): string {
+    return this.jwtService.sign(payload, { secret, expiresIn });
   }
 }

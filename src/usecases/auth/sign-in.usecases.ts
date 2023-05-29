@@ -14,9 +14,13 @@ export class SignInUseCases {
     private readonly tokenCache: ITokenCache,
   ) {}
 
-  async validateLogin(data: ISignIn): Promise<Record<string, any>> {
+  async validateLogin(
+    data: ISignIn,
+    remember?: boolean,
+  ): Promise<Record<string, any>> {
     const { emailOrUsername, password } = data;
     const secret = process.env.JWT_SECRET;
+    const expires = 60 * 3;
 
     const user = await this.userRepository.signIn({ emailOrUsername });
 
@@ -34,9 +38,21 @@ export class SignInUseCases {
 
     await this.userRepository.updateLastLogin(id);
 
-    const token = this.jwt.createToken({ id, username, email }, secret);
+    if (remember) {
+      const token = this.jwt.createToken({ id, username, email }, secret);
 
-    await this.tokenCache.setToken(id, token);
+      await this.tokenCache.setToken(id, token);
+
+      return { token };
+    }
+
+    const token = this.jwt.createToken(
+      { id, username, email },
+      secret,
+      expires,
+    );
+
+    await this.tokenCache.setExpirationToken(id, expires, token);
 
     return { token };
   }

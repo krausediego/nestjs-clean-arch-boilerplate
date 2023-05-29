@@ -10,8 +10,16 @@ export class TokenCache implements ITokenCache {
     private readonly redis: Redis,
   ) {}
 
-  async setToken(id: string, expiration: number, token: string): Promise<void> {
+  async setExpirationToken(
+    id: string,
+    expiration: number,
+    token: string,
+  ): Promise<void> {
     await this.redis.setex(id, expiration, token);
+  }
+
+  async setToken(id: string, token: string): Promise<void> {
+    await this.redis.set(id, token);
   }
 
   async getToken(id: string): Promise<string> {
