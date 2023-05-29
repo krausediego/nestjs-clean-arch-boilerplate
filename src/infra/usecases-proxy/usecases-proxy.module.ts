@@ -12,6 +12,7 @@ import { ExceptionsModule } from '../exceptions/exceptions.module';
 import { JwtTokenModule } from '../services/jwt/jwt.module';
 import { RedisCacheModule } from '../cache/redis/redis-cache.module';
 import { TokenCache } from '../cache/redis/token.cache';
+import { LogoutUseCases } from 'src/usecases/auth/logout.usecases';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ export class UseCasesProxyModule {
   // Auth
   static SIGN_UP_USECASES_PROXY = 'SignUpUsecasesProxy';
   static SIGN_IN_USECASES_PROXY = 'SignInUsecasesProxy';
+  static LOGOUT_USECASES_PROXY = 'LogoutUsecasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -59,10 +61,17 @@ export class UseCasesProxyModule {
               new SignInUseCases(userRepo, bcrypt, exceptions, jwt, tokenCache),
             ),
         },
+        {
+          inject: [TokenCache],
+          provide: UseCasesProxyModule.LOGOUT_USECASES_PROXY,
+          useFactory: (tokenCache: TokenCache) =>
+            new UseCaseProxy(new LogoutUseCases(tokenCache)),
+        },
       ],
       exports: [
         UseCasesProxyModule.SIGN_UP_USECASES_PROXY,
         UseCasesProxyModule.SIGN_IN_USECASES_PROXY,
+        UseCasesProxyModule.LOGOUT_USECASES_PROXY,
       ],
     };
   }

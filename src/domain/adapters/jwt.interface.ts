@@ -1,10 +1,16 @@
 export type IJwtPayload = Record<string, any>;
 
 export interface IJwtService {
-  createToken(
+  createExpirationToken(
     payload: IJwtPayload,
     secret: string,
-    expiresIn?: string | number,
+    expiresIn: string | number,
   ): string;
-  checkToken(token: string): Promise<any>;
+  createToken(payload: IJwtPayload, secret: string): string;
+  checkToken(token: string, secret: string): Promise<any>;
+  decode(token: string):
+    | string
+    | {
+        [key: string]: any;
+      };
 }

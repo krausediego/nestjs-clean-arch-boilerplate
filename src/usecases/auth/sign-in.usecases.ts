@@ -20,7 +20,7 @@ export class SignInUseCases {
   ): Promise<Record<string, any>> {
     const { emailOrUsername, password } = data;
     const secret = process.env.JWT_SECRET;
-    const expires = 60 * 3;
+    const expires = 60;
 
     const user = await this.userRepository.signIn({ emailOrUsername });
 
@@ -46,7 +46,7 @@ export class SignInUseCases {
       return { token };
     }
 
-    const token = this.jwt.createToken(
+    const token = this.jwt.createExpirationToken(
       { id, username, email },
       secret,
       expires,
